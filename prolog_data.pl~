@@ -1,0 +1,253 @@
+
+%The following facts relate to Question 1
+
+eats(dona,chicken).%dona eats chicken
+eats(harry,chicken).%harry eats chicken
+eats(john,fish).%john eats fish
+eats(smith,fish).%smith eats fish
+eats(tom,duck).%tom eats duck
+eats(rita,lamb).%rita eats lamb
+eats(paul,fish).%paul eats fish
+eats(paul,lamb).%paul eats lamb
+hungry(smith).%smith is hungry
+hungry(rita).%rita is hungry
+hungry(tom).%tom is hungry
+hungry(dona).%dona is hungry
+hungry(paul).%paul is hungry
+
+
+
+wants_fish(Person):- hungry(Person),eats(Person,fish).    %gets persons who eat fish                                                                            %and then filter by hungry
+
+
+%The following facts relate to Question 2
+
+mango(alice).%alice is a mango
+mango(alphonso).%alphonso is a mango
+mango(anderson).%anderson is a mango
+mango(badami).%badami is a mango
+mango(beverly).%beverly is a mango
+mango(bombay).%bombay is a mango
+mango(glenn).%glenn is a mango
+mango(julie).%julie is a mango
+
+lime(kafir).%kafir is a lime fruit
+lime(key).%key is a lime fruit
+lime(musk).%musk is a lime fruit
+lime(persian).%persian is a lime fruit
+
+pineapple(abacaxi).%abacaxi is a pineapple
+pineapple(brecheche).%brecheche is a pineapple
+pineapple(kona).%kona is a pineapple
+pineapple(queen).%queen is a pineapple
+
+price(alice,1.00).%alice costs 1 pound
+price(alphonso,0.50).%alphonso costs 50 pence
+price(anderson,0.75).%anderson costs 75 pence
+price(badami,0.55).%badami costs 55 pence
+price(beverly,0.80).%beverly costs 80 pence
+price(bombay,1.00).%bombay costs 1 pound
+price(glenn,0.85).%glenn costs 85 pence
+price(julie,0.65).%julie costs 65 pence
+
+price(kafir,0.20).%kafir costs 20 pence
+price(key,0.50).%key costs 50 pence
+price(musk,0.15).%musk costs 15 pence
+price(persian,0.75).%persian costs 75 pence
+
+price(abacaxi,1.00).%abacaxi costs 1 pound
+price(brecheche,1.50).%brecheche costs 1 pound 50 pence
+price(kona,1.85).%kona costs 1 pound 85 pence
+price(queen,2.10).%queen costs 2 pounds 10 pence
+
+
+
+%fruit(FRUIT):- listing(mango), listing(lime), listing(pineapple).
+
+fruit(FRUIT):-findall(X, mango(X),FRUIT1),findall(X, lime(X),FRUIT2),%finds all names for the 3 fruits                                                           %and then append  lists and print the list.
+    findall(X, pineapple(X),FRUIT3), append(FRUIT1,FRUIT2,FRUIT4),
+    append(FRUIT4,FRUIT3,FRUIT),
+    printlist(FRUIT).
+printlist([H|T]) :- print(H),nl, printlist(T).
+
+
+mango_asc( [_]      ) .
+mango_asc( [X,Y|Z] ) :- mango(X),mango(Y), price(X,A),price(Y,B),A =< B ,
+    mango_asc( [Y|Z] ) .
+% This takes a List and takes first and second element and gets prices
+% and comapres the compares prices to check A=<B and recusively loops
+% with removing first lement for each enxt loop until empty list.
+
+
+sum_fruits([],0).
+sum_fruits([Head|Tail], TotalSum):-
+sum_fruits(Tail, Sum1),price(Head,X),
+TotalSum is X+Sum1.
+% This takes a List and gets prices and loops and adds each prices to
+% totalsuma and retuns totalsum.
+
+
+%The following facts relate to Question 3
+
+details(1,[uk,london,english]).
+details(2,[france,paris,french]).
+details(3,[italy,rome,italian]).
+details(4,[spain,madrid,spanish]).
+details(5,[ecuador,quito,spanish]).
+details(6,[brazil,brasilia,portuguese]).
+details(7,[china,beijing,mandarin]).
+details(8,[malaysia,kuala_lumpur,malay]).
+details(9,[iran,tehran,persian]).
+details(10,[denmark,copenhagen,danish]).
+
+
+concatenation([H,R|_],Result):- details(H,X),details(R,Y), append(X,Y,Result).
+
+% Takes 2 IDs and gets their lists and concatenates the lists and
+% returns.
+
+
+
+
+
+%The following facts relate to Question 4
+
+drives(ashley,bmw).
+drives(ben,bmw).
+drives(ben,audi).
+drives(candy,audi).
+drives(candy,toyota).
+drives(tina,merc).
+drives(david,toyota).
+drives(david,ford).
+drives(evan,ford).
+drives(evan,golf).
+drives(francis,golf).
+drives(kate,fiat).
+
+driven(X,Y):- drives(X,Y).
+driven(X,Y):- drives(Y,X).
+
+possible_covid_transmission(Person1, Person2, Link):-
+transmission( Person1, Person2, [],Linkkk),
+findall(X,drives(_,X),Exes),
+intersection(Linkkk,Exes,Link).
+
+
+transmission(Person1, Person2, BlankLink, Link):-                                             driven(Person1, Person2),
+
+\+member(Person1, BlankLink),
+ Link = [Person1|BlankLink].
+
+transmission(Person1, Person2, BlankLink, Link):-
+driven(Person1,Next),
+Next \== Person2,
+\+member(Person1, BlankLink),
+transmission(Next, Person2, [Person1|BlankLink], Link).
+
+
+
+
+
+
+
+
+%The following facts relate to Question 5
+
+collects(c1,[5,2,10,50,20]).
+collects(c1,[20,5,10,5,10]).
+collects(c2,[5,10,20,50,5]).
+collects(c3,[5,20,10,50,50]).
+collects(c3,[10,20,50,5,2]).
+collects(c3,[50,5,10,5,5]).
+collects(c4,[20,10,2,5,2]).
+collects(c5,[50,5,5,20,20]).
+
+count_results([C1,C2]):-counter([C1,C2|_]).
+
+
+
+
+
+counter([A,B|_]):-collects(A,X),collects(B,Y), append(X,Y,M),
+    sort(M,List1),
+    member(V,List1),
+    count(M,V,C),
+    print(V),write(" occurs in: "),print(M),write(" "),print(C),write(" time(s)"),nl,fail.
+
+count([],X,0).
+count([X|T],X,Y):- count(T,X,Z), Y is 1+Z.
+count([X1|T],X,Z):- X1\=X,count(T,X,Z).
+
+%countall(M,V,C) :-
+ %   sort(M,List1),
+  %  member(V,List1),
+   % count(M,V,C).
+
+%The following facts relate to Question 6
+
+football_game(red,blue,w,4).
+football_game(red,green,l,0).
+football_game(red,yellow,w,5).
+football_game(red,brown,w,8).
+
+football_game(blue,red,w,3).
+football_game(blue,green,d,3).
+football_game(blue,yellow,w,4).
+football_game(blue,brown,w,7).
+
+football_game(green,red,w,4).
+football_game(green,blue,l,2).
+football_game(green,yellow,l,2).
+football_game(green,brown,w,6).
+
+football_game(yellow,red,w,3).
+football_game(yellow,blue,d,2).
+football_game(yellow,green,w,4).
+football_game(yellow,brown,w,1).
+
+football_game(brown,red,l,4).
+football_game(brown,blue,w,2).
+football_game(brown,green,w,5).
+football_game(brown,yellow,l,2).
+
+highest_home_score([A,B|_],Highest):- findall(X,football_game(A,_,_,X),Highest1),  findall(Y,football_game(B,_,_,Y),Highest2),append(Highest1,Highest2,Highest3),
+    max_list(Highest3,Highest).
+% Takes 2 colours and return highest by finding all goals corresponding
+% the the colours and then append the the 2 lists and finds max.
+
+%The following facts relate to Question 7
+
+money(alan,tim,'2020-05-18',20).
+money(sonny,robert,'2020-05-12',50).
+money(robert,sarah,'2020-06-12',80).
+money(jane,sam,'2020-07-06',70).
+money(harry,tom,'2020-02-23',50).
+money(kate,paul,'2020-06-01',90).
+money(jane,rita,'2020-04-20',35).
+money(alan,rob,'2020-05-18',65).
+money(alen,kit,'2020-06-11',75).
+money(sonny,paul,'2020-01-01',100).
+money(alan,kate,'2020-01-15',35).
+money(kate,dona,'2020-07-01',50).
+money(tim,alan,'2020-05-23',140).
+money(alan,harry,'2020-02-03',20).
+money(jane,pedro,'2020-04-20',70).
+money(sonny,david,'2020-02-21',50).
+money(robert,paul,'2020-02-21',80).
+money(harry,george,'2020-02-21',70).
+money(harry,paul,'2020-05-21',180).
+
+same_lender(B,E):- money(X,B,Y,_),money(Q,E,R,_), X==Q, Y==R,
+    write("lender is "),write(X),write(" and the date is '"),write(Y),write("'").
+
+% Takes 2 names of borrowers and get their information from money rules
+% and foramt them into strings.
+
+
+
+
+
+
+
+
